@@ -9,6 +9,7 @@ function registerSetup(setup) {
 
 function main() {
   ctx.clearRect(0, 0, 1400, 750); //erase the screen so you can draw everything in it's most current position
+  drawBackground();
 
   if (shouldDrawGrid) {
     makeGrid();
@@ -90,6 +91,63 @@ function JsonFunction(status, response) {
 ///////////////////////////////////////////////
 // Helper functions ///////////////////////////
 ///////////////////////////////////////////////
+
+function drawBackground() {
+  const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  sky.addColorStop(0, "#8ecae6");
+  sky.addColorStop(0.5, "#bde0fe");
+  sky.addColorStop(1, "#f4d35e");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "rgba(255, 214, 102, 0.9)";
+  ctx.beginPath();
+  ctx.arc(1180, 120, 58, 0, Math.PI * 2);
+  ctx.fill();
+
+  for (let i = 0; i < 6; i++) {
+    const x = 120 + i * 220;
+    const y = 110 + (i % 2) * 28;
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.beginPath();
+    ctx.arc(x, y, 28, 0, Math.PI * 2);
+    ctx.arc(x + 24, y - 10, 32, 0, Math.PI * 2);
+    ctx.arc(x + 54, y + 6, 24, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "#7aa45d";
+  ctx.beginPath();
+  ctx.moveTo(0, 520);
+  ctx.lineTo(180, 410);
+  ctx.lineTo(360, 500);
+  ctx.lineTo(550, 390);
+  ctx.lineTo(760, 520);
+  ctx.lineTo(980, 420);
+  ctx.lineTo(1180, 520);
+  ctx.lineTo(1400, 470);
+  ctx.lineTo(1400, 750);
+  ctx.lineTo(0, 750);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "#5a8d52";
+  ctx.beginPath();
+  ctx.moveTo(0, 620);
+  ctx.lineTo(220, 560);
+  ctx.lineTo(440, 640);
+  ctx.lineTo(720, 580);
+  ctx.lineTo(980, 640);
+  ctx.lineTo(1200, 570);
+  ctx.lineTo(1400, 620);
+  ctx.lineTo(1400, 750);
+  ctx.lineTo(0, 750);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "#2d6a4f";
+  ctx.fillRect(0, 650, canvas.width, 100);
+}
 
 function changeAnimationType() {
   if (currentAnimationType === animationTypes.frontDeath) {
@@ -233,7 +291,7 @@ function drawRobot() {
       player.x - hitDx,
       player.y - hitDy,
       player.width,
-      player.height
+      player.height,
     );
   } else {
     //for running to the left you mirror the image
@@ -248,7 +306,7 @@ function drawRobot() {
       -player.x - player.width + hitDx,
       player.y - hitDy,
       player.width,
-      player.height
+      player.height,
     );
     ctx.restore(); //put the canvas back to normal
   }
@@ -270,7 +328,7 @@ function collision() {
         platforms[i].x,
         platforms[i].y,
         platforms[i].width,
-        platforms[i].height
+        platforms[i].height,
       );
     }
   }
@@ -393,7 +451,7 @@ function deathOfPlayer() {
     canvas.width / 4,
     canvas.height / 6,
     canvas.width / 2,
-    canvas.height / 2
+    canvas.height / 2,
   );
   ctx.fillStyle = "black";
   ctx.font = "800% serif";
@@ -401,14 +459,14 @@ function deathOfPlayer() {
     "You are dead",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 5,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   ctx.font = "500% serif";
   ctx.fillText(
     "Hit any key to restart",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 3,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   if (keyPress.any) {
     keyPress.any = false;
@@ -509,7 +567,7 @@ function makeGrid() {
     ctx.fillText(
       i, // text
       i - 15, // x location
-      25 // y location
+      25, // y location
     );
   }
 
@@ -523,7 +581,7 @@ function makeGrid() {
     ctx.fillText(
       i, // text
       10, // x location
-      i + 5 // y location
+      i + 5, // y location
     );
   }
   gridMade = true;
@@ -536,7 +594,7 @@ function drawProjectiles() {
       projectiles[i].x,
       projectiles[i].y,
       projectiles[i].width,
-      projectiles[i].height
+      projectiles[i].height,
     );
     projectiles[i].x = projectiles[i].x + projectiles[i].speedX;
     projectiles[i].y = projectiles[i].y + projectiles[i].speedY;
@@ -552,7 +610,7 @@ function drawCannons() {
         cannons[i].x,
         cannons[i].y,
         cannons[i].projectileWidth,
-        cannons[i].projectileHeight
+        cannons[i].projectileHeight,
       );
     } else {
       cannons[i].projectileCountdown = cannons[i].projectileCountdown + 1;
@@ -578,6 +636,10 @@ function drawCannons() {
     ctx.translate(cannons[i].x, cannons[i].y); //you are moving the top left of the screen to the pictures location, this is because you can't rotate the image, you have to rotate the whole page
     ctx.rotate((cannons[i].rotation * Math.PI) / 180); //then you rotate. rotation is centered on 0,0 on the canvas, which is why we moved the picture to 0,0 with translate(x,y)
     ctx.drawImage(cannonImage, 0, 0, cannonWidth, cannonHeight); //you draw the image on the rotated canvas. as of this line, the picture is straight and the rest of the page is rotated
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillStyle = "rgba(255, 0, 0, 0.65)";
+    ctx.fillRect(0, 0, cannonWidth, cannonHeight);
+    ctx.globalCompositeOperation = "source-over";
     //also the previous line uses -width / 2 so that the picture is centered. This will mean that (0,0) is at the exact center of the image
     ctx.translate(-cannons[i].x, -cannons[i].y); //the reverse of the previous translate, this moves the page back to the correct place so that the image is no longer at (0,0)
     ctx.restore(); //this unrotates the canvas so the canvas is straight, but now since you did that the picture looks rotated
@@ -593,7 +655,7 @@ function drawCollectables() {
         collectables[i].x,
         collectables[i].y,
         collectableWidth,
-        collectableHeight
+        collectableHeight,
       );
     } else {
       //draw the icons at the top if collected
@@ -606,7 +668,7 @@ function drawCollectables() {
         200 + 100 * i,
         10,
         collectableWidth,
-        collectableHeight
+        collectableHeight,
       );
       ctx.globalAlpha = 1;
     }
@@ -679,7 +741,7 @@ function winGame() {
     canvas.width / 4,
     canvas.height / 6,
     canvas.width / 2,
-    canvas.height / 2
+    canvas.height / 2,
   );
   ctx.fillStyle = "white";
   ctx.font = "800% serif";
@@ -687,14 +749,14 @@ function winGame() {
     "You Win!",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 5,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   ctx.font = "500% serif";
   ctx.fillText(
     "Hit any key to restart",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 3,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   if (keyPress.any) {
     keyPress.any = false;
@@ -713,7 +775,7 @@ function createPlatform(
   speedX = 1,
   minY = null,
   maxY = null,
-  speedY = 1
+  speedY = 1,
 ) {
   platforms.push({
     x,
@@ -760,7 +822,7 @@ function createCannon(
   height = defaultProjectileHeight,
   minPos = null,
   maxPos = null,
-  speed = 1
+  speed = 1,
 ) {
   if (wallLocation === "top") {
     cannons.push({
@@ -841,7 +903,7 @@ function createCollectable(
   bounce = 1,
   minX = null,
   maxX = null,
-  speed = 1
+  speed = 1,
 ) {
   if (type !== "") {
     var image = document.createElement("img");
