@@ -1,6 +1,12 @@
+let backgroundImage;
+
 $(function () {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
+
+  backgroundImage = new Image();
+  backgroundImage.src = "../../background.png";
+
   window.addEventListener("load", loadJson);
 
   function setup() {
@@ -47,7 +53,6 @@ $(function () {
     createPlatform(880, 220, 110, 18, "#80ffdb", 820, 1080, 2);
     createPlatform(1080, 440, 95, 18, "#48cae4", null, null, 0, 360, 520, 1);
 
-  
     createCollectable("steve", 150, 610);
     createCollectable("diamond", 400, 530, 0.5, 0.7);
     createCollectable("grace", 600, 450);
@@ -59,7 +64,6 @@ $(function () {
     createBadPlatform(845, 600, 110, 20, "red");
     createFakePlatform(700, 330, 105, 18, "#495057");
     createFakePlatform(1110, 300, 85, 18, "#343a40");
-
 
     createCannon("right", 470, 2350, 12, 8, 300, 650, 1);
     createCannon("left", 610, 2050, 18, 12, 420, 700, 1);
@@ -74,6 +78,3 @@ $(function () {
 
   registerSetup(setup);
 });
-
-
-

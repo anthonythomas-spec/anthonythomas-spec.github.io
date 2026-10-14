@@ -93,6 +93,11 @@ function JsonFunction(status, response) {
 ///////////////////////////////////////////////
 
 function drawBackground() {
+  if (backgroundImage && backgroundImage.complete) {
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    return;
+  }
+
   const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
   sky.addColorStop(0, "#8ecae6");
   sky.addColorStop(0.5, "#bde0fe");
